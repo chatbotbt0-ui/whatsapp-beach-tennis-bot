@@ -1,11 +1,4 @@
-FROM node:18-bullseye
-
-# Instalar dependências mínimas do Chrome
-RUN apt-get update && apt-get install -y \
-    chromium-browser \
-    fonts-noto-color-emoji \
-    ca-certificates \
-    --no-install-recommends && rm -rf /var/lib/apt/lists/*
+FROM buildkite/puppeteer:latest
 
 # Definir o diretório de trabalho
 WORKDIR /app
@@ -16,9 +9,9 @@ RUN npm install --production
 
 COPY . .
 
-# Configurar o Puppeteer para usar o Chromium instalado
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Configurar variáveis para usar o Chrome que já vem na imagem
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Rodar o bot
 CMD ["node", "src/index.js"]
