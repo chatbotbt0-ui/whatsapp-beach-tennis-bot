@@ -4,6 +4,7 @@ const { isAuthorized } = require('./whatsapp/auth');
 const { route } = require('./commands');
 const { agendar } = require('./scheduler/reminders');
 const { startQRServer } = require('./whatsapp/qr-server');
+const { discoverLids } = require('./whatsapp/discover-lids');
 
 let messageCounter = 0;
 
@@ -98,8 +99,12 @@ client.on('message', async (message) => {
   }
 });
 
-client.on('ready', () => {
+client.on('ready', async () => {
   console.log('\n✓✓✓ WhatsApp Pronto ✓✓✓');
+
+  // Descobrir LIDs dos números autorizados
+  await discoverLids(client);
+
   console.log('Agendando lembretes...\n');
   agendar(client);
 });

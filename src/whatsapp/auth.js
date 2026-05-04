@@ -1,25 +1,35 @@
 const config = require('../config');
+const { getLidForNumber, getPhoneNumberFromLid } = require('./discover-lids');
 
 function isAuthorized(message) {
   if (!message || !message.from) {
     return false;
   }
 
-  // Extrai apenas o número (remove @c.us, @g.us, etc)
-  const phoneNumber = message.from.replace(/\D/g, '');
+  const jid = message.from;
 
-  // Verifica se o número está na lista de autorizados
-  const isInAuthorizedList = config.authorizedNumbers.some(num => {
+  // Primeiro, tenta comparar com números diretos (formato @c.us)
+  const phoneNumber = jid.replace(/\D/g, '');
+  const isPhoneAuthorized = config.authorizedNumbers.some(num => {
     const normalizedNum = num.replace(/\D/g, '');
     return normalizedNum === phoneNumber;
   });
 
-  // Log para debug
-  if (!isInAuthorizedList) {
-    console.log(`[AUTH] ❌ Número não autorizado: ${phoneNumber}`);
+  if (isPhoneAuthorized) {
+    return true;
   }
 
-  return isInAuthorizedList;
+  // Se não for número direto, tenta comparar com LIDs salvos
+  for (const authorizedNumber of config.authorizedNumbers) {
+    const authorizedLid = getLidForNumber(authorizedNumber);
+    if (authorizedLid && authorizedLid === jid) {
+      return true;
+    }
+  }
+
+  // Log para debug
+  console.log(`[AUTH] ❌ JID não autorizado: ${jid}`);
+  return false;
 }
 
 function professorChatIds() {
