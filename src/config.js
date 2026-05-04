@@ -17,13 +17,14 @@ if (missing.length > 0) {
 }
 
 // Se houver credenciais em Base64, decodifica e salva em arquivo temporário
+let credentialsPathResolved = process.env.GOOGLE_CREDENTIALS_PATH;
 if (process.env.GOOGLE_CREDENTIALS_B64) {
-  const credentialsPath = path.join(__dirname, '..', 'credentials.json');
-  if (!fs.existsSync(credentialsPath)) {
+  credentialsPathResolved = path.join(__dirname, '..', 'credentials.json');
+  if (!fs.existsSync(credentialsPathResolved)) {
     try {
       const buffer = Buffer.from(process.env.GOOGLE_CREDENTIALS_B64, 'base64');
       const credentialsJson = buffer.toString('utf-8');
-      fs.writeFileSync(credentialsPath, credentialsJson);
+      fs.writeFileSync(credentialsPathResolved, credentialsJson);
       console.log('✓ Credenciais carregadas da variável de ambiente.');
     } catch (err) {
       console.error('❌ Erro ao decodificar credenciais:', err.message);
@@ -65,7 +66,7 @@ module.exports = {
   sheetsId: sheetsIds[0], // para compatibilidade com código antigo
   userSheetsMap,
   getSheetsId: (phoneNumber) => userSheetsMap.get(phoneNumber) || sheetsIds[0],
-  credentialsPath: process.env.GOOGLE_CREDENTIALS_PATH,
+  credentialsPath: credentialsPathResolved,
   reminderCron: process.env.REMINDER_CRON || '0 9 * * *',
   timezone: process.env.TZ || 'America/Sao_Paulo',
 };
