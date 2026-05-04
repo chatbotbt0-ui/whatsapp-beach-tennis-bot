@@ -1,5 +1,5 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+const { setQR, startQRServer } = require('./qr-server');
 
 const client = new Client({
   authStrategy: new LocalAuth(),
@@ -9,9 +9,20 @@ const client = new Client({
   },
 });
 
+let qrServerStarted = false;
+
 client.on('qr', (qr) => {
-  console.log('\nEscaneie o QR Code abaixo com o WhatsApp do professor:\n');
-  qrcode.generate(qr, { small: true });
+  console.log('\n📱 QR CODE GERADO!');
+  console.log('   Acesse: http://localhost:3000/qr');
+  console.log('   (Em Railway: veja a URL abaixo)\n');
+
+  setQR(qr);
+
+  // Iniciar servidor na primeira vez
+  if (!qrServerStarted) {
+    qrServerStarted = true;
+    startQRServer();
+  }
 });
 
 client.on('ready', () => {
