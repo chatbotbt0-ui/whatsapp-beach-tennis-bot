@@ -70,11 +70,27 @@ client.on('message', async (message) => {
       phoneNumber = config.authorizedNumbers[0];
     }
 
-    const resposta = await route(message.body, phoneNumber);
+    console.log(`[MSG #${messageCounter}] 🔄 Aguardando resposta...`);
+    const startTime = Date.now();
+
+    // Timeout de 30 segundos para a resposta
+    const resposta = await Promise.race([
+      route(message.body, phoneNumber),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout ao processar comando (30s)')), 30000)
+      )
+    ]);
+
+    const duration = Date.now() - startTime;
     await message.reply(resposta);
-    console.log(`[MSG #${messageCounter}] ✓ Resposta enviada`);
+    console.log(`[MSG #${messageCounter}] ✓ Resposta enviada (${duration}ms)`);
   } catch (err) {
     console.error(`[MSG #${messageCounter}] ❌ Erro:`, err.message);
+    try {
+      await message.reply(`❌ Erro ao processar comando: ${err.message}`);
+    } catch (replyErr) {
+      console.error(`[MSG #${messageCounter}] ❌ Erro ao enviar mensagem de erro:`, replyErr.message);
+    }
   }
 });
 
