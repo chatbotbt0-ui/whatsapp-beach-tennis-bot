@@ -3,6 +3,7 @@ const config = require('./config');
 const { isAuthorized } = require('./whatsapp/auth');
 const { route } = require('./commands');
 const { agendar } = require('./scheduler/reminders');
+const { startQRServer } = require('./whatsapp/qr-server');
 
 let messageCounter = 0;
 
@@ -10,6 +11,10 @@ console.log(`\n═════════════════════�
 console.log(`BOT ESPERANDO MENSAGENS DOS NÚMEROS:`);
 console.log(`${config.authorizedNumbers.join(', ')}`);
 console.log(`═══════════════════════════════════\n`);
+
+// Iniciar servidor HTTP para QR code ANTES do cliente WhatsApp
+console.log('🚀 Iniciando servidor HTTP para QR code...');
+startQRServer();
 
 // Debug: Monitor ALL events
 const events = ['message', 'message_create', 'message_edit', 'message_revoke_everyone', 'message_revoke_me', 'group_join', 'group_leave', 'group_update', 'change_number'];
