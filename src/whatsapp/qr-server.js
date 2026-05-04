@@ -8,7 +8,17 @@ const PORT = process.env.PORT || 3000;
 // Armazenar o QR code atual
 function setQR(qrString) {
   currentQR = qrString;
+  console.log('✓ QR code atualizado e disponível em /qr');
 }
+
+// Endpoint raiz - status do servidor
+app.get('/', (req, res) => {
+  if (currentQR) {
+    res.json({ status: 'waiting_for_scan', message: 'QR code disponível em /qr' });
+  } else {
+    res.json({ status: 'ready', message: 'Bot pronto e conectado ao WhatsApp' });
+  }
+});
 
 // Endpoint para retornar a imagem QR code
 app.get('/qr', async (req, res) => {
@@ -45,8 +55,10 @@ app.get('/status', (req, res) => {
 
 function startQRServer() {
   app.listen(PORT, () => {
-    console.log(`\n📱 QR Code disponível em: http://localhost:${PORT}/qr`);
-    console.log(`   (Em Railway: https://<seu-projeto>.up.railway.app/qr)\n`);
+    console.log(`\n✅ Servidor HTTP iniciado na porta ${PORT}`);
+    console.log(`📱 QR Code disponível em:`);
+    console.log(`   Local: http://localhost:${PORT}/qr`);
+    console.log(`   Railway: https://chatbot-production-5216.up.railway.app/qr\n`);
   });
 }
 
