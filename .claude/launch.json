@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "WhatsTenis Bot (Start)",
+      "description": "Run the bot in production mode",
+      "runtimeExecutable": "C:\\Users\\victo\\Desktop\\Peoject WhatsTenis\\start-bot.bat",
+      "runtimeArgs": [],
+      "port": null
+    },
+    {
+      "name": "WhatsTenis Bot (Dev)",
+      "description": "Run the bot with auto-reload (development mode)",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["--watch", "src/index.js"],
+      "port": null
+    }
+  ]
+}
