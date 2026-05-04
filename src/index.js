@@ -113,11 +113,14 @@ client.on('message', async (message) => {
 client.on('ready', async () => {
   console.log('\n✓✓✓ WhatsApp Pronto ✓✓✓');
 
-  // Descobrir LIDs dos números autorizados
-  await discoverLids(client);
-
   console.log('Agendando lembretes...\n');
   agendar(client);
+
+  // Descobrir LIDs em background (sem bloquear)
+  console.log('🔍 Descobrindo LIDs dos números autorizados (background)...');
+  discoverLids(client).catch(err => {
+    console.error('❌ Erro ao descobrir LIDs:', err.message);
+  });
 });
 
 console.log('Inicializando...');

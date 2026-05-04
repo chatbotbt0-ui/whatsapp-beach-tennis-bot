@@ -43,7 +43,14 @@ async function discoverLids(client) {
 
     try {
       console.log(`⏳ Convertendo ${phoneNumber}...`);
-      const numberId = await client.getNumberId(phoneNumber);
+
+      // Timeout de 10 segundos para não travar
+      const numberId = await Promise.race([
+        client.getNumberId(phoneNumber),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Timeout')), 10000)
+        )
+      ]);
 
       if (numberId) {
         lids[phoneNumber] = numberId._serialized;
@@ -53,7 +60,7 @@ async function discoverLids(client) {
         console.warn(`⚠️  ${phoneNumber} não está registrado no WhatsApp`);
       }
     } catch (err) {
-      console.error(`❌ Erro ao converter ${phoneNumber}:`, err.message);
+      console.warn(`⚠️  Erro ao converter ${phoneNumber}: ${err.message}`);
     }
   }
 
