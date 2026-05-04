@@ -4,7 +4,7 @@ const { isAuthorized } = require('./whatsapp/auth');
 const { route } = require('./commands');
 const { agendar } = require('./scheduler/reminders');
 const { startQRServer } = require('./whatsapp/qr-server');
-const { discoverLids } = require('./whatsapp/discover-lids');
+const { discoverLids, getPhoneNumberFromLid } = require('./whatsapp/discover-lids');
 
 let messageCounter = 0;
 
@@ -62,16 +62,27 @@ client.on('message', async (message) => {
 
   console.log(`[MSG #${messageCounter}] ✓ Processando: "${message.body}"`);
   try {
-    // Extrai o número do telefone de message.from (ex: 5582996198965@c.us → 5582996198965)
-    let phoneNumber = (message.from || '').match(/^(\d+)/)?.[1];
+    // Primeiro tenta encontrar o número através dos LIDs descobertos
+    let phoneNumber = null;
 
-    // Valida se é um número de telefone real (começa com 55 = Brasil, 10+ dígitos)
-    // Rejeita IDs internos do WhatsApp que são números aleatórios muito grandes
-    const isValidPhoneNumber = phoneNumber && phoneNumber.length >= 10 && /^55\d{9,11}$/.test(phoneNumber);
+    // Se for um @lid, procura nos LIDs salvos
+    if (message.from && message.from.includes('@lid')) {
+      phoneNumber = getPhoneNumberFromLid(message.from);
+      console.log(`[MSG #${messageCounter}] 🔍 LID ${message.from} → ${phoneNumber || 'não encontrado'}`);
+    }
 
-    // Se não for um número válido ou não está na lista autorizada,
-    // usa o primeiro número autorizado como padrão
-    if (!isValidPhoneNumber || !config.authorizedNumbers.includes(phoneNumber)) {
+    // Se ainda não encontrou, tenta extrair como número direto
+    if (!phoneNumber) {
+      const extracted = (message.from || '').match(/^(\d+)/)?.[1];
+      // Valida se é um número de telefone real (começa com 55 = Brasil, 10+ dígitos)
+      if (extracted && extracted.length >= 10 && /^55\d{9,11}$/.test(extracted)) {
+        phoneNumber = extracted;
+      }
+    }
+
+    // Se ainda não conseguiu identificar, usa o primeiro número autorizado como fallback
+    if (!phoneNumber || !config.authorizedNumbers.includes(phoneNumber)) {
+      console.log(`[MSG #${messageCounter}] ⚠️  Número não identificado, usando padrão: ${config.authorizedNumbers[0]}`);
       phoneNumber = config.authorizedNumbers[0];
     }
 
