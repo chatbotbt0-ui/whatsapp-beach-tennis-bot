@@ -1,4 +1,4 @@
-FROM buildkite/puppeteer:latest
+FROM buildkite/puppeteer:16.10.0
 
 # Definir o diretório de trabalho
 WORKDIR /app
