@@ -1,3 +1,2 @@
-2026/05/04-01:19:46.791 4384 Reusing MANIFEST C:\Users\victo\Desktop\Peoject WhatsTenis\.wwebjs_auth\session\Default\Session Storage/MANIFEST-000001
-2026/05/04-01:19:46.792 4384 Recovering log #3
-2026/05/04-01:19:46.796 4384 Reusing old log C:\Users\victo\Desktop\Peoject WhatsTenis\.wwebjs_auth\session\Default\Session Storage/000003.log 
+2026/05/04-01:20:56.950 d864 Creating DB C:\Users\victo\Desktop\Peoject WhatsTenis\.wwebjs_auth\session\Default\Session Storage since it was missing.
+2026/05/04-01:20:56.972 d864 Reusing MANIFEST C:\Users\victo\Desktop\Peoject WhatsTenis\.wwebjs_auth\session\Default\Session Storage/MANIFEST-000001

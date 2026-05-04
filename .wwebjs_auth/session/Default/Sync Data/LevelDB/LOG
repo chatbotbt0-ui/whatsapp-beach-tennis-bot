@@ -1,3 +1,2 @@
-2026/05/04-01:19:45.333 1ae04 Reusing MANIFEST C:\Users\victo\Desktop\Peoject WhatsTenis\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
-2026/05/04-01:19:45.334 1ae04 Recovering log #3
-2026/05/04-01:19:45.334 1ae04 Reusing old log C:\Users\victo\Desktop\Peoject WhatsTenis\.wwebjs_auth\session\Default\Sync Data\LevelDB/000003.log 
+2026/05/04-01:20:56.909 1ac2c Creating DB C:\Users\victo\Desktop\Peoject WhatsTenis\.wwebjs_auth\session\Default\Sync Data\LevelDB since it was missing.
+2026/05/04-01:20:56.916 1ac2c Reusing MANIFEST C:\Users\victo\Desktop\Peoject WhatsTenis\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
