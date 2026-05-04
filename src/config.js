@@ -1,12 +1,30 @@
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 
-const required = ['AUTHORIZED_NUMBERS', 'GOOGLE_SHEETS_IDS', 'GOOGLE_CREDENTIALS_PATH'];
+const required = ['AUTHORIZED_NUMBERS', 'GOOGLE_SHEETS_IDS'];
+
+// Verifica se há credenciais via variável de ambiente ou arquivo
+if (!process.env.GOOGLE_CREDENTIALS_B64 && !process.env.GOOGLE_CREDENTIALS_PATH) {
+  required.push('GOOGLE_CREDENTIALS_PATH');
+}
 
 const missing = required.filter((key) => !process.env[key]);
 if (missing.length > 0) {
   console.error(`Variaveis de ambiente faltando: ${missing.join(', ')}`);
   console.error('Copie .env.example para .env e preencha os valores.');
   process.exit(1);
+}
+
+// Se houver credenciais em Base64, decodifica e salva em arquivo temporário
+if (process.env.GOOGLE_CREDENTIALS_B64) {
+  const credentialsPath = path.join(__dirname, '..', 'credentials.json');
+  if (!fs.existsSync(credentialsPath)) {
+    const buffer = Buffer.from(process.env.GOOGLE_CREDENTIALS_B64, 'base64');
+    const credentialsJson = buffer.toString('utf-8');
+    fs.writeFileSync(credentialsPath, credentialsJson);
+    console.log('✓ Credenciais carregadas da variável de ambiente.');
+  }
 }
 
 // Parse múltiplos números (separados por vírgula)
