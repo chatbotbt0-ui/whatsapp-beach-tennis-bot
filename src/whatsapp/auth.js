@@ -1,16 +1,25 @@
 const config = require('../config');
 
 function isAuthorized(message) {
-  // Aceita mensagens de chats diretos (não grupos)
-  // Grupos terminam em @g.us, chats diretos em @c.us ou @lid
-  if (message.from && (message.from.includes('@c.us') || message.from.includes('@lid'))) {
-    return true;
+  if (!message || !message.from) {
+    return false;
   }
-  // Se for privado (não é grupo), aceita
-  if (message.from && !message.from.includes('-') && !message.from.includes('@g.us')) {
-    return true;
+
+  // Extrai apenas o número (remove @c.us, @g.us, etc)
+  const phoneNumber = message.from.replace(/\D/g, '');
+
+  // Verifica se o número está na lista de autorizados
+  const isInAuthorizedList = config.authorizedNumbers.some(num => {
+    const normalizedNum = num.replace(/\D/g, '');
+    return normalizedNum === phoneNumber;
+  });
+
+  // Log para debug
+  if (!isInAuthorizedList) {
+    console.log(`[AUTH] ❌ Número não autorizado: ${phoneNumber}`);
   }
-  return false;
+
+  return isInAuthorizedList;
 }
 
 function professorChatIds() {
