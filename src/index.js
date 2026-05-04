@@ -64,9 +64,13 @@ client.on('message', async (message) => {
     // Extrai o número do telefone de message.from (ex: 5582996198965@c.us → 5582996198965)
     let phoneNumber = (message.from || '').match(/^(\d+)/)?.[1];
 
-    // Se não conseguir extrair número ou ele não está na lista autorizada,
+    // Valida se é um número de telefone real (começa com 55 = Brasil, 10+ dígitos)
+    // Rejeita IDs internos do WhatsApp que são números aleatórios muito grandes
+    const isValidPhoneNumber = phoneNumber && phoneNumber.length >= 10 && /^55\d{9,11}$/.test(phoneNumber);
+
+    // Se não for um número válido ou não está na lista autorizada,
     // usa o primeiro número autorizado como padrão
-    if (!phoneNumber || !config.authorizedNumbers.includes(phoneNumber)) {
+    if (!isValidPhoneNumber || !config.authorizedNumbers.includes(phoneNumber)) {
       phoneNumber = config.authorizedNumbers[0];
     }
 
